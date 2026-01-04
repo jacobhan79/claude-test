@@ -11,13 +11,13 @@ describe('Button', () => {
     render(<Button>Click me</Button>)
     const button = screen.getByRole('button', { name: /click me/i })
     expect(button).toBeInTheDocument()
-    expect(button).toHaveClass('bg-primary')
+    expect(button).toHaveClass('from-primary')
   })
 
   it('renders with different variants', () => {
     render(<Button variant="danger">Delete</Button>)
     const button = screen.getByRole('button', { name: /delete/i })
-    expect(button).toHaveClass('bg-danger')
+    expect(button).toHaveClass('from-danger')
   })
 
   it('calls onClick when clicked', () => {
