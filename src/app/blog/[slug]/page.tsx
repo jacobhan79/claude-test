@@ -24,12 +24,12 @@ async function getSinglePost(slug: string): Promise<BlogPost | null> {
   }
 
   const json = await response.json()
-  
+
   if (json.errors) {
     throw new Error(`GraphQL errors: ${JSON.stringify(json.errors)}`)
   }
 
-  return json.data.blogPost
+  return json.data.post
 }
 
 export default async function BlogPostPage({ 
@@ -48,26 +48,30 @@ export default async function BlogPostPage({
       <article>
         <header className="mb-8">
           <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            {post.blogTitle}
+            {post.title}
           </h1>
           <div className="flex items-center gap-3 text-lg text-gray-600 dark:text-gray-400">
-            <Avatar name={post.createdBy.name} size="lg" />
-            <div>
-              <div>By {post.createdBy.name}</div>
-              <div className="text-sm">{new Date(post.createdAt).toLocaleDateString()}</div>
-            </div>
+            {post.author && (
+              <>
+                <Avatar name={post.author.name} size="lg" />
+                <div>
+                  <div>By {post.author.name}</div>
+                  <div className="text-sm">{new Date(post.date).toLocaleDateString()}</div>
+                </div>
+              </>
+            )}
           </div>
         </header>
-        
-        <div 
+
+        <div
           className={styles.blogContent}
-          dangerouslySetInnerHTML={{ __html: sanitizeHTML(post.blogPostContent.html) }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHTML(post.content.html) }}
         />
       </article>
-      
+
       <div className="mt-12 pt-8 border-t border-border">
-        <Link 
-          href="/blog" 
+        <Link
+          href="/blog"
           className="inline-flex items-center space-x-2 px-4 py-2 bg-transparent text-muted hover:text-primary transition-colors duration-200 hover:bg-primary/5 rounded-lg"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -2,13 +2,15 @@
 
 export interface BlogPost {
   id: string
-  blogPostSlug: string
-  blogTitle: string
+  slug: string
+  title: string
+  date: string
+  excerpt?: string
   createdAt: string
-  createdBy: {
+  author?: {
     name: string
   }
-  blogPostContent: {
+  content: {
     html: string
   }
 }

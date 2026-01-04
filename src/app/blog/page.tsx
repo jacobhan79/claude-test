@@ -21,44 +21,48 @@ async function getPosts(): Promise<BlogPost[]> {
   }
 
   const json = await response.json()
-  
+
   if (json.errors) {
     throw new Error(`GraphQL errors: ${JSON.stringify(json.errors)}`)
   }
 
-  return json.data.blogPosts
+  return json.data.posts
 }
 
-function getPreviewText(html: string, maxLength: number = 100): string {
+function getPreviewText(html: string, maxLength: number = 300): string {
   // Strip HTML tags and decode HTML entities
   const textContent = html.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').trim()
-  
+
   if (textContent.length <= maxLength) {
     return textContent
   }
-  
+
   return textContent.substring(0, maxLength).trim() + '...'
 }
 
 function BlogPostCard({ post }: { post: BlogPost }) {
   return (
     <article className="group mb-4 p-6 bg-surface rounded-lg shadow-xs hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-      <Link href={`/blog/${post.blogPostSlug}`} className="block">
+      <Link href={`/blog/${post.slug}`} className="block">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <h2 className="text-2xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors duration-300">
-              {post.blogTitle}
+              {post.title}
             </h2>
             <p className="text-sm text-muted/70 leading-relaxed mb-4">
-              {getPreviewText(post.blogPostContent.html, 300)}
+              {post.excerpt || getPreviewText(post.content.html)}
             </p>
             <div className="flex items-center text-sm text-muted">
-              <div className="flex items-center space-x-2">
-                <Avatar name={post.createdBy.name} size="md" />
-                <span>By {post.createdBy.name}</span>
-              </div>
-              <span className="mx-3">•</span>
-              <time className="text-muted">{new Date(post.createdAt).toLocaleDateString()}</time>
+              {post.author && (
+                <>
+                  <div className="flex items-center space-x-2">
+                    <Avatar name={post.author.name} size="md" />
+                    <span>By {post.author.name}</span>
+                  </div>
+                  <span className="mx-3">•</span>
+                </>
+              )}
+              <time className="text-muted">{new Date(post.date).toLocaleDateString()}</time>
             </div>
           </div>
         </div>

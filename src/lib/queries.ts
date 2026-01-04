@@ -2,15 +2,17 @@
 
 export const GET_BLOG_POSTS = `
   query Posts {
-    blogPosts {
-      blogTitle
-      blogPostSlug
+    posts {
+      id
+      title
+      slug
+      date
+      excerpt
       createdAt
-      createdBy {
+      author {
         name
       }
-      id
-      blogPostContent {
+      content {
         html
       }
     }
@@ -19,15 +21,17 @@ export const GET_BLOG_POSTS = `
 
 export const GET_SINGLE_POST = `
   query GetSinglePost($slug: String!) {
-    blogPost(where: { blogPostSlug: $slug }) {
-      blogTitle
-      blogPostSlug
+    post(where: { slug: $slug }) {
+      id
+      title
+      slug
+      date
+      excerpt
       createdAt
-      createdBy {
+      author {
         name
       }
-      id
-      blogPostContent {
+      content {
         html
       }
     }

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-- `npm run dev` - Start development server with Turbopack for faster builds
+- `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build production application
 - `npm run start` - Start production server
 - `npm run lint` - Run Next.js linting
@@ -13,66 +13,64 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-**Shinobi** is a Next.js 15 blog application built as a Claude Code learning project. The architecture follows modern React patterns with App Router.
+**Shinobi** is a Next.js 15 blog application demonstrating modern React patterns with App Router. Built as a learning project for Claude Code.
 
 ### Key Technologies
 
 - **Next.js 15** with App Router and Turbopack
 - **React 19** with TypeScript
-- **Tailwind CSS v4** with custom CSS variables for theming
-- **Vitest** for testing with JSDOM environment
+- **Tailwind CSS v4** with custom CSS variables
+- **Vitest** for component testing
+- **Hygraph** (GraphQL CMS) for blog content
 - **DOMPurify** for HTML sanitization
-- **GraphQL** for content management via Hygraph CMS
 
 ### Project Structure
 
 ```
 src/
 ├── app/                    # Next.js App Router pages
-│   ├── layout.tsx         # Root layout with header and dark mode toggle
-│   ├── page.tsx           # Homepage with navigation to blog/preview
-│   ├── blog/              # Blog listing and individual posts
-│   └── preview/           # Component preview page
-├── components/            # Reusable React components
-│   ├── ui/Button/         # Button component with variants
-│   ├── BlogSidebar.tsx    # Blog page sidebar
-│   └── DarkModeToggle.tsx # Theme switching component
-├── hooks/                 # Reusable hooks
-└── lib/                   # Utility functions and types
-    ├── queries.ts         # GraphQL queries for blog data
-    ├── types.ts           # TypeScript type definitions
-    └── sanitize.ts        # HTML sanitization utilities
+│   ├── layout.tsx         # Root layout with header/nav
+│   ├── page.tsx           # Homepage
+│   ├── blog/              # Blog listing and posts
+│   ├── preview/           # Component preview
+│   └── about/             # About page
+├── components/
+│   ├── ui/                # Reusable UI components (Button, Card, Avatar, Icon, Modal)
+│   ├── BlogSidebar.tsx
+│   └── DarkModeToggle.tsx
+├── lib/
+│   ├── queries.ts         # GraphQL queries
+│   ├── types.ts           # TypeScript types
+│   └── sanitize.ts        # HTML sanitization
+└── test/
+    ├── setup.ts           # Vitest setup
+    └── vitest.d.ts        # Vitest type definitions
 ```
 
-### Data Architecture
+### Data Fetching Pattern
 
-- **External CMS**: Uses Hygraph (GraphQL CMS) for blog content
-- **Environment Variables**: Requires `HYGRAPH_ENDPOINT` for GraphQL API
-- **Data Fetching**: Server-side rendering with 1-hour revalidation
-- **Content Security**: HTML content is sanitized using DOMPurify with strict allowlists
+- Blog posts fetched from Hygraph CMS via GraphQL
+- Server-side rendering with 1-hour revalidation (`next: { revalidate: 3600 }`)
+- Requires `HYGRAPH_ENDPOINT` environment variable
+- All HTML content must be sanitized with DOMPurify before rendering
 
-### Styling System
+### Theming System
 
-- **Custom Theme System**: CSS variables in `globals.css` with light/dark mode support
-- **Tailwind Integration**: Custom color tokens mapped to CSS variables
-- **Component Styling**: Mix of Tailwind classes and inline styles
-- **Typography**: Uses Rubik (headings) and Merriweather (body) from Google Fonts
+- CSS variables in `globals.css` define light/dark themes
+- Dark mode toggled by adding `.dark` class to `:root`
+- Tailwind configured to use CSS variables (e.g., `text-foreground`, `bg-surface`)
+- Typography: Rubik for headings, Merriweather for body text
 
-### Testing Setup
+### Testing
 
-- **Vitest** configured with React Testing Library
-- **JSDOM environment** for DOM testing
-- **Setup file**: `src/test/setup.ts` for test configuration
-- **Type definitions**: Custom vitest types in `src/test/vitest.d.ts`
+- Vitest with React Testing Library
+- JSDOM environment for DOM testing
+- Setup file: `src/test/setup.ts`
+- Each UI component has a corresponding `.test.tsx` file
 
 ## Development Notes
 
-- Uses `@/*` path alias for src imports
-- Blog posts require GraphQL endpoint configuration
-- Dark mode state is managed via CSS classes on root element
-- Component testing follows React Testing Library patterns
-- HTML sanitization is critical for security when displaying CMS content
-
-- when making new page components, always add a link to that page in the header. Only do this for page components, not UI or other drop-in components.
-
-- Use Context7 to check up-to-date docs when needed for implementing new libraries or frameworks, or adding features using them.
+- Path alias `@/*` maps to `src/*`
+- When making new page components, always add a link to that page in the header. Only do this for page components, not UI or other drop-in components.
+- Dark mode managed via CSS class on root element (no JavaScript state)
+- All CMS HTML content requires sanitization for security
