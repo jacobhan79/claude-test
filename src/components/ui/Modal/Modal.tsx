@@ -1,17 +1,41 @@
 import React, { useEffect } from 'react'
 
-interface ModalProps {
+export interface ModalProps {
+  /** Controls whether the modal is visible */
   isOpen: boolean
+  /** Callback function when the modal is closed */
   onClose: () => void
+  /** The content to display inside the modal */
   children: React.ReactNode
+  /** Visual style variant - defaults to 'primary' */
   variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning'
+  /** Size of the modal - defaults to 'md' */
   size?: 'sm' | 'md' | 'lg'
+  /** Additional CSS classes to apply */
   className?: string
+  /** Optional title to display in the header */
   title?: string
+  /** Whether to show the close button - defaults to true */
   showCloseButton?: boolean
 }
 
-const Modal: React.FC<ModalProps> = ({
+/**
+ * A modal dialog component with backdrop and keyboard support.
+ * Closes on Escape key press and backdrop click.
+ *
+ * @example
+ * ```tsx
+ * <Modal
+ *   isOpen={isOpen}
+ *   onClose={handleClose}
+ *   title="Confirm Action"
+ *   variant="primary"
+ * >
+ *   Modal content here
+ * </Modal>
+ * ```
+ */
+export function Modal({
   isOpen,
   onClose,
   children,
@@ -20,7 +44,7 @@ const Modal: React.FC<ModalProps> = ({
   className = '',
   title,
   showCloseButton = true,
-}) => {
+}: ModalProps): React.ReactElement | null {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {

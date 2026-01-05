@@ -5,9 +5,19 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar/Avatar'
 import styles from './BlogPost.module.css'
+import { env } from '@/lib/env'
+
+interface GraphQLResponse<T> {
+  data?: T
+  errors?: Array<{ message: string }>
+}
+
+interface SinglePostData {
+  post: BlogPost | null
+}
 
 async function getSinglePost(slug: string): Promise<BlogPost | null> {
-  const response = await fetch(process.env.HYGRAPH_ENDPOINT!, {
+  const response = await fetch(env.HYGRAPH_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -23,20 +33,27 @@ async function getSinglePost(slug: string): Promise<BlogPost | null> {
     throw new Error(`Failed to fetch post: ${response.status}`)
   }
 
-  const json = await response.json()
+  const json = await response.json() as GraphQLResponse<SinglePostData>
 
   if (json.errors) {
-    throw new Error(`GraphQL errors: ${JSON.stringify(json.errors)}`)
+    const errorMessages = json.errors.map(e => e.message).join(', ')
+    throw new Error(`GraphQL errors: ${errorMessages}`)
+  }
+
+  if (!json.data) {
+    throw new Error('Invalid response: missing data')
   }
 
   return json.data.post
 }
 
-export default async function BlogPostPage({ 
-  params 
-}: { 
-  params: { slug: string } 
-}) {
+interface BlogPostPageProps {
+  params: { slug: string }
+}
+
+export default async function BlogPostPage({
+  params
+}: BlogPostPageProps): Promise<React.ReactElement> {
   const post = await getSinglePost(params.slug)
 
   if (!post) {

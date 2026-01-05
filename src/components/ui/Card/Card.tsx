@@ -1,20 +1,39 @@
-interface CardProps {
+import React from 'react'
+
+export interface CardProps {
+  /** The content to display inside the card */
   children: React.ReactNode
+  /** Visual style variant - defaults to 'primary' */
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
+  /** Size of the card padding - defaults to 'md' */
   size?: 'sm' | 'md' | 'lg'
+  /** Disables interaction if card is clickable */
   disabled?: boolean
+  /** Additional CSS classes to apply */
   className?: string
+  /** Click handler - makes the card interactive */
   onClick?: () => void
 }
 
-function Card({ 
-  children, 
-  variant = 'primary', 
+/**
+ * A flexible card component that can be used for displaying content.
+ * When onClick is provided, the card becomes interactive.
+ *
+ * @example
+ * ```tsx
+ * <Card variant="primary" size="md">
+ *   Card content here
+ * </Card>
+ * ```
+ */
+export function Card({
+  children,
+  variant = 'primary',
   size = 'md',
   disabled = false,
   className = '',
   onClick
-}: CardProps) {
+}: CardProps): React.ReactElement {
   const baseClasses = 'rounded-xl border-2 bg-surface shadow-md transition-all duration-200 outline-none focus:ring-3 disabled:opacity-60 disabled:cursor-not-allowed'
   
   const variantClasses = {

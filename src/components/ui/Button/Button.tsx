@@ -1,20 +1,38 @@
-interface ButtonProps {
+import React from 'react'
+
+export interface ButtonProps {
+  /** The content to display inside the button */
   children: React.ReactNode
+  /** Visual style variant - defaults to 'primary' */
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'white' | 'black'
+  /** Click handler function */
   onClick?: () => void
+  /** Disables the button and prevents interaction */
   disabled?: boolean
+  /** HTML button type attribute */
   type?: 'button' | 'submit' | 'reset'
+  /** Additional CSS classes to apply */
   className?: string
 }
 
-function Button({ 
-  children, 
-  variant = 'primary', 
-  onClick, 
-  disabled = false, 
+/**
+ * A flexible button component with multiple variants and states.
+ *
+ * @example
+ * ```tsx
+ * <Button variant="primary" onClick={handleClick}>
+ *   Click me
+ * </Button>
+ * ```
+ */
+export function Button({
+  children,
+  variant = 'primary',
+  onClick,
+  disabled = false,
   type = 'button',
   className = ''
-}: ButtonProps) {
+}: ButtonProps): React.ReactElement {
   const baseClasses = 'px-8 py-4 rounded-2xl font-bold text-lg cursor-pointer transition-all duration-200 outline-none focus:ring-3 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md'
   
   const variantClasses = {

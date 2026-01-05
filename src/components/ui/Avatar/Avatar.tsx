@@ -1,16 +1,30 @@
-interface AvatarProps {
+import React from 'react'
+
+export interface AvatarProps {
+  /** Name to display (first letter will be shown) */
   name: string
+  /** Size of the avatar - defaults to 'md' */
   size?: 'sm' | 'md' | 'lg' | 'xl'
+  /** Visual style variant - defaults to 'gradient' */
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'gradient'
+  /** Additional CSS classes to apply */
   className?: string
 }
 
-function Avatar({ 
-  name, 
-  size = 'md', 
+/**
+ * An avatar component that displays the first letter of a name.
+ *
+ * @example
+ * ```tsx
+ * <Avatar name="John Doe" size="lg" variant="primary" />
+ * ```
+ */
+export function Avatar({
+  name,
+  size = 'md',
   variant = 'gradient',
   className = ''
-}: AvatarProps) {
+}: AvatarProps): React.ReactElement {
   const initial = name.charAt(0).toUpperCase()
   
   const sizeClasses = {

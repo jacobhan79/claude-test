@@ -3,9 +3,19 @@ import { BlogPost } from '@/lib/types'
 import Link from 'next/link'
 import BlogSidebar from '@/components/BlogSidebar'
 import Avatar from '@/components/ui/Avatar/Avatar'
+import { env } from '@/lib/env'
+
+interface GraphQLResponse<T> {
+  data?: T
+  errors?: Array<{ message: string }>
+}
+
+interface PostsData {
+  posts: BlogPost[]
+}
 
 async function getPosts(): Promise<BlogPost[]> {
-  const response = await fetch(process.env.HYGRAPH_ENDPOINT!, {
+  const response = await fetch(env.HYGRAPH_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -20,10 +30,15 @@ async function getPosts(): Promise<BlogPost[]> {
     throw new Error(`Failed to fetch posts: ${response.status}`)
   }
 
-  const json = await response.json()
+  const json = await response.json() as GraphQLResponse<PostsData>
 
   if (json.errors) {
-    throw new Error(`GraphQL errors: ${JSON.stringify(json.errors)}`)
+    const errorMessages = json.errors.map(e => e.message).join(', ')
+    throw new Error(`GraphQL errors: ${errorMessages}`)
+  }
+
+  if (!json.data?.posts) {
+    throw new Error('Invalid response: missing posts data')
   }
 
   return json.data.posts
@@ -40,7 +55,11 @@ function getPreviewText(html: string, maxLength: number = 300): string {
   return textContent.substring(0, maxLength).trim() + '...'
 }
 
-function BlogPostCard({ post }: { post: BlogPost }) {
+interface BlogPostCardProps {
+  post: BlogPost
+}
+
+function BlogPostCard({ post }: BlogPostCardProps): React.ReactElement {
   return (
     <article className="group mb-4 p-6 bg-surface rounded-lg shadow-xs hover:shadow-md transition-all duration-300 hover:-translate-y-1">
       <Link href={`/blog/${post.slug}`} className="block">
